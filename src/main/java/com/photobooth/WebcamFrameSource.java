@@ -15,16 +15,12 @@ public class WebcamFrameSource implements FrameSource {
 
     @Override
     public void start() {
-        if (webcam != null && !webcam.isOpen()) {
-            webcam.open();
-        }
+        if (webcam != null && !webcam.isOpen()) webcam.open();
     }
 
     @Override
     public void stop() {
-        if (webcam != null && webcam.isOpen()) {
-            webcam.close();
-        }
+        if (webcam != null && webcam.isOpen()) webcam.close();
     }
 
     @Override
@@ -41,7 +37,5 @@ public class WebcamFrameSource implements FrameSource {
     }
 
     @Override
-    public String getDescription() {
-        return "Webcam";
-    }
+    public String getDescription() { return "Webcam"; }
 }

@@ -14,35 +14,31 @@ public class PhotoBoothMain {
 
     public static void main(String[] args) {
         System.setProperty("apple.awt.brushMetalLook", "true");
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
+        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
+        catch (Exception ignored) {}
         SwingUtilities.invokeLater(() -> new PhotoBoothMain().run());
     }
 
     private void run() {
         FrameSource source = chooseFrameSource();
-        if (source == null) {
-            System.exit(0);
-        }
+        if (source == null) System.exit(0);
 
         JFrame frame = new JFrame("Photo Booth — " + source.getDescription());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
         JPanel root = new JPanel(new BorderLayout());
-        root.setBackground(new Color(200, 200, 200));
+        root.setBackground(Color.BLACK);
 
         EffectsGridPanel effectsGrid = new EffectsGridPanel(source);
         FilmStripPanel filmStrip = new FilmStripPanel();
         ShutterBar shutterBar = new ShutterBar(effectsGrid, filmStrip);
+        shutterBar.registerPolaroidCallback();
 
         root.add(effectsGrid, BorderLayout.CENTER);
 
         JPanel south = new JPanel(new BorderLayout());
-        south.setBackground(new Color(200, 200, 200));
+        south.setBackground(Color.BLACK);
         south.add(shutterBar, BorderLayout.NORTH);
         south.add(filmStrip, BorderLayout.SOUTH);
         root.add(south, BorderLayout.SOUTH);
@@ -75,48 +71,32 @@ public class PhotoBoothMain {
 
     private FrameSource chooseFrameSource() {
         String[] options = { "Use Webcam", "Use Phone (port 8080)", "Cancel" };
-
         int choice = JOptionPane.showOptionDialog(
             null,
             "Choose a video source for Photo Booth:",
             "Photo Booth — Video Source",
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.QUESTION_MESSAGE,
-            null,
-            options,
-            options[0]);
-
-        if (choice == 0) {
-            return createWebcamSource();
-        } else if (choice == 1) {
-            return createPhoneSource();
-        } else {
-            return null;
-        }
+            null, options, options[0]);
+        if (choice == 0) return createWebcamSource();
+        if (choice == 1) return createPhoneSource();
+        return null;
     }
 
     private FrameSource createWebcamSource() {
         Webcam webcam = null;
-        try {
-            webcam = Webcam.getDefault();
-        } catch (Exception ignored) {}
-
+        try { webcam = Webcam.getDefault(); } catch (Exception ignored) {}
         if (webcam == null) {
             int answer = JOptionPane.showConfirmDialog(
                 null,
                 "No webcam detected.\n\n" +
                 "Would you like to use your phone as the camera instead?\n" +
                 "(The app will listen on port 8080 for JPEG frames.)",
-                "No Webcam",
-                JOptionPane.YES_NO_OPTION,
+                "No Webcam", JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
-
-            if (answer == JOptionPane.YES_OPTION) {
-                return createPhoneSource();
-            }
+            if (answer == JOptionPane.YES_OPTION) return createPhoneSource();
             return null;
         }
-
         System.out.println("[PhotoBooth] Using webcam: " + webcam.getName());
         return new WebcamFrameSource(webcam);
     }
@@ -133,15 +113,12 @@ public class PhotoBoothMain {
         String msg =
             "Listening for frames on port 8080.\n\n" +
             "On your phone, POST each JPEG frame to:\n\n" +
-            "    http://" + ip + ":8080/frame\n\n" +
+            "    http://" + ip + ":8080/upload\n\n" +
             "Test from a browser on the same Wi-Fi:\n\n" +
             "    http://" + ip + ":8080/\n\n" +
-            "Watch the terminal for [PhotoBooth] log lines.\n" +
-            "The window title will show frame arrival stats.";
-
-        JOptionPane.showMessageDialog(
-            null, msg, "Phone Camera Mode",
-            JOptionPane.INFORMATION_MESSAGE);
+            "Watch the terminal for [PhotoBooth] log lines.";
+        JOptionPane.showMessageDialog(null, msg,
+            "Phone Camera Mode", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private String findLanIp() {
@@ -151,9 +128,8 @@ public class PhotoBoothMain {
             for (NetworkInterface ni : Collections.list(ifaces)) {
                 if (!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
                 for (InetAddress addr : Collections.list(ni.getInetAddresses())) {
-                    if (addr instanceof Inet4Address && !addr.isLoopbackAddress()) {
+                    if (addr instanceof Inet4Address && !addr.isLoopbackAddress())
                         return addr.getHostAddress();
-                    }
                 }
             }
         } catch (Exception ignored) {}

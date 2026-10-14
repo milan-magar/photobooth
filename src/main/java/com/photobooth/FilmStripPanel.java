@@ -19,9 +19,9 @@ public class FilmStripPanel extends JPanel {
 
     public FilmStripPanel() {
         setLayout(new BorderLayout());
-        setBackground(new Color(180, 180, 180));
+        setBackground(new Color(40, 40, 40));
         setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(140, 140, 140)),
+            BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(20, 20, 20)),
             BorderFactory.createEmptyBorder(6, 8, 6, 8)));
         setPreferredSize(new Dimension(0, THUMB_H + 24));
 
@@ -35,13 +35,11 @@ public class FilmStripPanel extends JPanel {
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         scroll.getHorizontalScrollBar().setUnitIncrement(20);
-
         add(scroll, BorderLayout.CENTER);
     }
 
     public void addThumbnail(BufferedImage full) {
         photos.add(full);
-
         BufferedImage thumb = new BufferedImage(THUMB_W, THUMB_H,
                                                 BufferedImage.TYPE_INT_RGB);
         Graphics2D g = thumb.createGraphics();
@@ -66,11 +64,9 @@ public class FilmStripPanel extends JPanel {
         holder.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) { showFull(full); }
         });
-
         strip.add(holder);
         strip.revalidate();
         strip.repaint();
-
         SwingUtilities.invokeLater(() -> {
             JScrollPane sp = (JScrollPane) strip.getParent().getParent();
             JScrollBar bar = sp.getHorizontalScrollBar();
@@ -80,8 +76,7 @@ public class FilmStripPanel extends JPanel {
 
     private void showFull(BufferedImage img) {
         JDialog dlg = new JDialog(
-            (Frame) SwingUtilities.getWindowAncestor(this),
-            "Photo", true);
+            (Frame) SwingUtilities.getWindowAncestor(this), "Photo", true);
         dlg.setLayout(new BorderLayout());
         JLabel lbl = new JLabel(new ImageIcon(img));
         lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));

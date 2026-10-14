@@ -1,0 +1,28 @@
+# ---- Maven ----
+target/
+dependency-reduced-pom.xml
+
+# ---- Captured photos ----
+captures/
+
+# ---- IDEs ----
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+nbproject/
+
+# ---- Compiled ----
+*.class
+*.jar
+!lib/*.jar
+
+# ---- Logs ----
+*.log
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+desktop.ini
